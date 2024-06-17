@@ -2,6 +2,7 @@ import { Base } from './base.js';
 import { Monster } from './monster.js';
 import { Tower } from './tower.js';
 import './socket.js';
+import { CLIENT_VERSION } from './constants.js';
 /* 
   어딘가에 엑세스 토큰이 저장이 안되어 있다면 로그인을 유도하는 코드를 여기에 추가해주세요!
 */
@@ -251,10 +252,21 @@ Promise.all([
 ]).then(() => {
   /* 서버 접속 코드 (여기도 완성해주세요!) */
   let somewhere;
-  serverSocket = io('서버주소', {
+  serverSocket = io('http://localhost:3000', {
+    query: {
+      clientVersion: CLIENT_VERSION,
+    },
     auth: {
       token: somewhere, // 토큰이 저장된 어딘가에서 가져와야 합니다!
     },
+  });
+
+  serverSocket.on('response', (data) => {
+    console.log(data);
+  });
+
+  serverSocket.on('connection', (data) => {
+    console.log('connection: ', data);
   });
 
   /* 
@@ -266,6 +278,15 @@ Promise.all([
 	  }
 	*/
 });
+
+const sendEvent = (handlerId, payload) => {
+  serverSocket.emit('event', {
+    userId,
+    clientVersion: CLIENT_VERSION,
+    handlerId,
+    payload,
+  });
+};
 
 const buyTowerButton = document.createElement('button');
 buyTowerButton.textContent = '타워 구입';
@@ -279,3 +300,5 @@ buyTowerButton.style.cursor = 'pointer';
 buyTowerButton.addEventListener('click', placeNewTower);
 
 document.body.appendChild(buyTowerButton);
+
+export { sendEvent };
