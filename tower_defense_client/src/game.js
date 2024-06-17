@@ -1,7 +1,8 @@
 import { Base } from './base.js';
 import { Monster } from './monster.js';
 import { Tower } from './tower.js';
-import './socket.js';
+import { CLIENT_VERSION } from './constants.js';
+import { getAuthToken } from './GaApplication.js';
 /* 
   어딘가에 엑세스 토큰이 저장이 안되어 있다면 로그인을 유도하는 코드를 여기에 추가해주세요!
 */
@@ -250,22 +251,42 @@ Promise.all([
   ),
 ]).then(() => {
   /* 서버 접속 코드 (여기도 완성해주세요!) */
-  let somewhere;
-  serverSocket = io('서버주소', {
+  serverSocket = io('http://localhost:3000', {
+    query: {
+      clientVersion: CLIENT_VERSION,
+    },
     auth: {
-      token: somewhere, // 토큰이 저장된 어딘가에서 가져와야 합니다!
+      token: getAuthToken(), // 토큰이 저장된 어딘가에서 가져와야 합니다!
     },
   });
 
+  serverSocket.on('response', (data) => {
+    console.log(data);
+  });
+
+  serverSocket.on('connection', (data) => {
+    console.log('connection: ', data);
+  });
+
   /* 
-	  서버의 이벤트들을 받는 코드들은 여기다가 쭉 작성해주시면 됩니다! 
-	  e.g. serverSocket.on("...", () => {...});
-	  이 때, 상태 동기화 이벤트의 경우에 아래의 코드를 마지막에 넣어주세요! 최초의 상태 동기화 이후에 게임을 초기화해야 하기 때문입니다! 
-	  if (!isInitGame) {
-		initGame();
-	  }
-	*/
+    서버의 이벤트들을 받는 코드들은 여기다가 쭉 작성해주시면 됩니다! 
+    e.g. serverSocket.on("...", () => {...});
+    이 때, 상태 동기화 이벤트의 경우에 아래의 코드를 마지막에 넣어주세요! 최초의 상태 동기화 이후에 게임을 초기화해야 하기 때문입니다! 
+  */
+
+  if (!isInitGame) {
+    initGame();
+  }
 });
+
+const sendEvent = (handlerId, payload) => {
+  serverSocket.emit('event', {
+    userId,
+    clientVersion: CLIENT_VERSION,
+    handlerId,
+    payload,
+  });
+};
 
 const buyTowerButton = document.createElement('button');
 buyTowerButton.textContent = '타워 구입';
@@ -279,3 +300,5 @@ buyTowerButton.style.cursor = 'pointer';
 buyTowerButton.addEventListener('click', placeNewTower);
 
 document.body.appendChild(buyTowerButton);
+
+export { sendEvent };
