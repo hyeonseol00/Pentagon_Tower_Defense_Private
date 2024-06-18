@@ -15,7 +15,11 @@ export const handleConnection = (socket, userUUID) => {
 
   const { monster, commonData } = getGameAssets();
 
-  socket.emit('connection', { uuid: userUUID, monster, commonData });
+  socket.emit('connection', {
+    uuid: userUUID,
+    monster: monster.data[0],
+    commonData,
+  });
 };
 
 export const handleEvent = (io, socket, data) => {
