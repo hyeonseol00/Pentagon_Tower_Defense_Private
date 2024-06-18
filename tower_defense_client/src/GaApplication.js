@@ -1,20 +1,17 @@
-let authToken;
-let userId;
-
 function getAuthToken() {
-  return authToken;
+  return localStorage.getItem('authToken');
 }
 
 function setAuthToken(token) {
-  authToken = token;
+  localStorage.setItem('authToken', token);
 }
 
 function getUserId() {
-  return userId;
+  return localStorage.getItem('userId');
 }
 
 function setUserId(id) {
-  userId = id;
+  localStorage.setItem('userId', id);
 }
 
 export { getAuthToken, setAuthToken, getUserId, setUserId };
