@@ -2,7 +2,7 @@ import { Base } from './base.js';
 import { Monster } from './monster.js';
 import { Tower } from './tower.js';
 import { CLIENT_VERSION } from './constants.js';
-import { getAuthToken } from './GaApplication.js';
+import { getAuthToken, getUserId } from './GaApplication.js';
 /* 
   어딘가에 엑세스 토큰이 저장이 안되어 있다면 로그인을 유도하는 코드를 여기에 추가해주세요!
 */
@@ -267,6 +267,7 @@ Promise.all([
   serverSocket.on('connection', (data) => {
     syncData(data);
     console.log('connection: ', data);
+    sendEvent(2, {});
 
     if (!isInitGame) {
       initGame();
@@ -300,7 +301,7 @@ function syncData(data) {
 
 const sendEvent = (handlerId, payload) => {
   serverSocket.emit('event', {
-    userId,
+    userId: getUserId(),
     clientVersion: CLIENT_VERSION,
     handlerId,
     payload,
