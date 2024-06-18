@@ -150,6 +150,8 @@ function placeInitialTowers() {
     const tower = new Tower(x, y, towerCost);
     towers.push(tower);
     tower.draw(ctx, towerImage);
+
+    sendEvent(21, { newTowerCoordinates: [x, y] });
   }
 }
 
@@ -159,6 +161,11 @@ function placeNewTower() {
 	  빠진 코드들을 채워넣어주세요! 
 	*/
   const { x, y } = getRandomPositionNearPath(200);
+
+  if (userGold >= towerCost)
+    sendEvent(22, { newTowerCoordinates: [x, y], gold: userGold });
+  else return;
+
   const tower = new Tower(x, y);
   towers.push(tower);
   tower.draw(ctx, towerImage);
@@ -212,6 +219,7 @@ function gameLoop() {
       const isDestroyed = monster.move(base);
       if (isDestroyed) {
         /* 게임 오버 */
+        sendEvent(3, {});
         alert('게임 오버. 스파르타 본부를 지키지 못했다...ㅠㅠ');
         location.reload();
       }
@@ -219,6 +227,8 @@ function gameLoop() {
     } else {
       /* 몬스터가 죽었을 때 */
       monsters.splice(i, 1);
+
+      sendEvent(23, { score });
     }
   }
 
@@ -261,7 +271,7 @@ Promise.all([
   });
 
   serverSocket.on('response', (data) => {
-    console.log(data);
+    console.log('response: ', data);
   });
 
   serverSocket.on('connection', (data) => {
@@ -275,8 +285,14 @@ Promise.all([
   });
 
   serverSocket.on('dataSync', (data) => {
-    syncData(data);
-    console.log(data.message);
+    if (data.data) {
+      score = data.data.score;
+      userGold = data.data.gold;
+    }
+    if (data.monster) {
+      monsterLevel = data.monster.level;
+      monsterSpawnInterval = data.monster.monsterSpawnInterval;
+    }
   });
 
   /* 
