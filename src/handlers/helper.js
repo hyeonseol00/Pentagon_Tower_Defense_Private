@@ -48,6 +48,7 @@ export const handleEvent = (io, socket, data) => {
     return;
   }
 
+  if (response.data) socket.emit('dataSync', response);
   socket.emit('response', response);
 };
 
