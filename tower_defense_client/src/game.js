@@ -273,6 +273,11 @@ Promise.all([
     }
   });
 
+  serverSocket.on('dataSync', (data) => {
+    syncData(data);
+    console.log(data.message);
+  });
+
   /* 
     서버의 이벤트들을 받는 코드들은 여기다가 쭉 작성해주시면 됩니다! 
     e.g. serverSocket.on("...", () => {...});
