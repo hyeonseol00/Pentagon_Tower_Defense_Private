@@ -265,7 +265,12 @@ Promise.all([
   });
 
   serverSocket.on('connection', (data) => {
+    syncData(data);
     console.log('connection: ', data);
+
+    if (!isInitGame) {
+      initGame();
+    }
   });
 
   /* 
@@ -273,11 +278,20 @@ Promise.all([
     e.g. serverSocket.on("...", () => {...});
     이 때, 상태 동기화 이벤트의 경우에 아래의 코드를 마지막에 넣어주세요! 최초의 상태 동기화 이후에 게임을 초기화해야 하기 때문입니다! 
   */
-
-  if (!isInitGame) {
-    initGame();
-  }
 });
+
+function syncData(data) {
+  const commonData = data.commonData.data[0];
+  const monster = data.monster;
+
+  userGold = commonData.user_gold;
+  baseHp = commonData.base_hp;
+  towerCost = commonData.tower_cost;
+  numOfInitialTowers = commonData.num_of_initial_towers;
+  monsterLevel = monster.level;
+  monsterSpawnInterval = monster.spawn_interval;
+  highScore = 0; // 기존 최고 점수, 인증 구현 후 추가 예정
+}
 
 const sendEvent = (handlerId, payload) => {
   serverSocket.emit('event', {
