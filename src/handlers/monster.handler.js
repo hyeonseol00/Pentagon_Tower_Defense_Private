@@ -1,9 +1,9 @@
 import { getGameAssets } from '../init/assets.js';
 import { getUserData, updateUserData } from '../models/user-data.model.js';
 
-export const killMonsterHandler = (userId, payload) => {
+export const killMonsterHandler = async (userId, payload) => {
   const { monster } = getGameAssets();
-  const userData = getUserData(userId);
+  const userData = await getUserData(userId);
 
   if (Math.abs(userData.score - payload.score) >= 200)
     return { status: 'fail', message: '점수 데이터가 잘못되었습니다!' };
@@ -14,7 +14,7 @@ export const killMonsterHandler = (userId, payload) => {
     userData.monster_level++;
     userData.gold += 1000;
 
-    updateUserData(userData);
+    await updateUserData(userData);
 
     return {
       status: 'success',
@@ -24,7 +24,7 @@ export const killMonsterHandler = (userId, payload) => {
     };
   }
 
-  updateUserData(userData);
+  await updateUserData(userData);
 
   return {
     status: 'success',

@@ -1,10 +1,10 @@
 import { getGameAssets } from '../init/assets.js';
 import { getUserData, updateUserData } from '../models/user-data.model.js';
 
-export const placeInitialTowerHandler = (userId, payload) => {
-  const userData = getUserData(userId);
+export const placeInitialTowerHandler = async (userId, payload) => {
+  const userData = await getUserData(userId);
   userData.tower_coordinates.push(payload.newTowerCoordinates);
-  updateUserData(userData);
+  await updateUserData(userData);
 
   return {
     status: 'success',
@@ -12,8 +12,8 @@ export const placeInitialTowerHandler = (userId, payload) => {
   };
 };
 
-export const placeTowerHandler = (userId, payload) => {
-  const userData = getUserData(userId);
+export const placeTowerHandler = async (userId, payload) => {
+  const userData = await getUserData(userId);
   const { commonData } = getGameAssets();
 
   if (userData.gold < commonData.tower_cost)
@@ -21,7 +21,7 @@ export const placeTowerHandler = (userId, payload) => {
 
   userData.gold -= 1000;
   userData.tower_coordinates.push(payload.newTowerCoordinates);
-  updateUserData(userData);
+  await updateUserData(userData);
 
   return {
     status: 'success',

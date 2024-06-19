@@ -10,17 +10,17 @@ import { getGameAssets } from '../init/assets.js';
 import jwt from 'jsonwebtoken';
 
 const registerHandler = (io) => {
-  io.on('connection', (socket) => {
+  io.on('connection', async (socket) => {
     const { commonData, monster } = getGameAssets();
     const userID = jwt.verify(
       socket.request.cookies.authorization.split(' ')[1],
       process.env.TOKEN_SECRET_KEY,
     ).id;
-    const userData = getUserData(userID);
+    const userData = await getUserData(userID);
 
-    addUser({ uuid: userID, socketId: socket.id });
+    await addUser({ uuid: userID, socket_id: socket.id });
     if (!userData)
-      addUserData({
+      await addUserData({
         account_id: userID,
         monster_level: monster.data[0].level,
         monster_spawn_interval: monster.data[0].spawn_interval,
@@ -31,7 +31,7 @@ const registerHandler = (io) => {
         hp: commonData.data[0].base_hp,
       });
     else
-      updateUserData({
+      await updateUserData({
         account_id: userID,
         monster_level: monster.data[0].level,
         monster_spawn_interval: monster.data[0].spawn_interval,
