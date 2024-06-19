@@ -1,19 +1,23 @@
-const userDatas = [];
+import userDataSchema from '../mongodb/schemas/user-data.schema.js';
 
-export const addUserData = (userData) => {
-  userDatas.push(userData);
+export const addUserData = async (userData) => {
+  const targetData = new userDataSchema(userData);
+
+  await targetData.save();
 };
 
-export const updateUserData = (updatedUserData) => {
-  const idx = userDatas.findIndex(
-    (userData) => (userData.account_id = updatedUserData.account_id),
-  );
+export const updateUserData = async (updatedUserData) => {
+  let userData = await userDataSchema
+    .findOne({ account_id: updatedUserData.account_id })
+    .exec();
 
-  userDatas[idx] = updatedUserData;
+  userData = Object.assign(userData, updatedUserData);
+
+  await userData.save();
 };
 
-export const getUserData = (userId) => {
-  const userData = userDatas.find((userData) => (userData.account_id = userId));
+export const getUserData = async (userId) => {
+  const userData = await userDataSchema.findOne({ account_id: userId }).exec();
 
   return userData;
 };
