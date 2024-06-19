@@ -1,9 +1,16 @@
-const highScore = 0;
+import highScoreSchema from '../mongodb/schemas/high-score.schema.js';
 
-export const updateHighScore = (score) => {
-  highScore = score;
+export const updateHighScore = async (score) => {
+  let highScore = await highScoreSchema.findOne().exec();
+
+  if (!highScore) highScore = new highScoreSchema({ high_score: score });
+  else highScore.high_score = score;
+
+  await highScore.save();
 };
 
-export const getHighScore = () => {
-  return highScore;
+export const getHighScore = async () => {
+  const highScore = await highScoreSchema.findOne().exec();
+
+  return highScore.high_score;
 };
