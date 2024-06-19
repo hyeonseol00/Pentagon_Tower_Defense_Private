@@ -3,8 +3,6 @@ import { getHighScore, updateHighScore } from '../models/high-score.model.js';
 import { getUserData, updateUserData } from '../models/user-data.model.js';
 
 export const gameStart = (userId, payload) => {
-  const { templates } = getGameAssets();
-
   return { status: 'success', message: '게임이 정상적으로 실행되었습니다.' };
 };
 
