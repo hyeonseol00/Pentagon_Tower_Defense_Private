@@ -216,10 +216,10 @@ function gameLoop() {
   for (let i = monsters.length - 1; i >= 0; i--) {
     const monster = monsters[i];
     if (monster.hp > 0) {
-      const isDestroyed = monster.move(base);
+      const isDestroyed = monster.move(base, score);
       if (isDestroyed) {
         /* 게임 오버 */
-        sendEvent(3, {});
+        sendEvent(3, { score });
         alert('게임 오버. 스파르타 본부를 지키지 못했다...ㅠㅠ');
         location.reload();
       }
@@ -277,11 +277,11 @@ Promise.all([
   serverSocket.on('connection', (data) => {
     syncData(data);
     console.log('connection: ', data);
-    sendEvent(2, {});
 
     if (!isInitGame) {
       initGame();
     }
+    sendEvent(2, {});
   });
 
   serverSocket.on('dataSync', (data) => {
