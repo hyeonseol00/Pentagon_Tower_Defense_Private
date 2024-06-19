@@ -44,8 +44,7 @@ export const handleEvent = (io, socket, data) => {
 
   const response = handler(data.userId, data.payload);
   if (response.broadcast) {
-    io.emit('response', 'broadcast');
-    return;
+    io.emit('response', response.broadcast);
   }
 
   if (response.data) socket.emit('dataSync', response);
