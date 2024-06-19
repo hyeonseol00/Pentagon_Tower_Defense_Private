@@ -22,23 +22,23 @@ const registerHandler = (io) => {
     if (!userData)
       await addUserData({
         account_id: userID,
-        monster_level: monster.data[0].level,
-        monster_spawn_interval: monster.data[0].spawn_interval,
+        monster_level: monster[0].level,
+        monster_spawn_interval: monster[0].spawn_interval,
         score: 0,
         user_high_score: 0,
         tower_coordinates: [],
-        gold: commonData.data[0].user_gold,
-        hp: commonData.data[0].base_hp,
+        gold: commonData[0].user_gold,
+        hp: commonData[0].base_hp,
       });
     else
       await updateUserData({
         account_id: userID,
-        monster_level: monster.data[0].level,
-        monster_spawn_interval: monster.data[0].spawn_interval,
+        monster_level: monster[0].level,
+        monster_spawn_interval: monster[0].spawn_interval,
         score: 0,
         tower_coordinates: [],
-        gold: commonData.data[0].user_gold,
-        hp: commonData.data[0].base_hp,
+        gold: commonData[0].user_gold,
+        hp: commonData[0].base_hp,
       });
     handleConnection(socket, userID);
 

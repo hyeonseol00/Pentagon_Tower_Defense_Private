@@ -19,7 +19,7 @@ export const handleConnection = async (socket, userUUID) => {
 
   socket.emit('connection', {
     uuid: userUUID,
-    monster: monster.data[0],
+    monster: monster[0],
     commonData,
   });
 };

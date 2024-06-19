@@ -20,7 +20,7 @@ export const killMonsterHandler = async (userId, payload) => {
       status: 'success',
       message: '몬스터를 처치했습니다, 몬스터가 강해집니다!',
       data: userData,
-      monster: monster.data[userData.monster_level - 1],
+      monster: monster[userData.monster_level - 1],
     };
   }
 

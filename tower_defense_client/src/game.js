@@ -303,7 +303,7 @@ Promise.all([
 });
 
 function syncData(data) {
-  const commonData = data.commonData.data[0];
+  const commonData = data.commonData[0];
   const monster = data.monster;
 
   userGold = commonData.user_gold;
