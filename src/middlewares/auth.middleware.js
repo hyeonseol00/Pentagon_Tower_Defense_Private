@@ -18,7 +18,7 @@ export default async function (req, res, next) {
       throw new Error('토큰 사용자가 존재하지 않습니다.');
     }
 
-    req.account = account;
+    req.userId = id;
 
     next();
   } catch (error) {

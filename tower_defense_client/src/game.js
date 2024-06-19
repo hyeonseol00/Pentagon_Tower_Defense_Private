@@ -2,7 +2,7 @@ import { Base } from './base.js';
 import { Monster } from './monster.js';
 import { Tower } from './tower.js';
 import { CLIENT_VERSION } from './constants.js';
-import { getAuthToken } from './GaApplication.js';
+import { getAuthToken, getUserId } from './GaApplication.js';
 /* 
   어딘가에 엑세스 토큰이 저장이 안되어 있다면 로그인을 유도하는 코드를 여기에 추가해주세요!
 */
@@ -150,6 +150,8 @@ function placeInitialTowers() {
     const tower = new Tower(x, y, towerCost);
     towers.push(tower);
     tower.draw(ctx, towerImage);
+
+    sendEvent(21, { newTowerCoordinates: [x, y] });
   }
 }
 
@@ -159,6 +161,11 @@ function placeNewTower() {
 	  빠진 코드들을 채워넣어주세요! 
 	*/
   const { x, y } = getRandomPositionNearPath(200);
+
+  if (userGold >= towerCost)
+    sendEvent(22, { newTowerCoordinates: [x, y], gold: userGold });
+  else return;
+
   const tower = new Tower(x, y);
   towers.push(tower);
   tower.draw(ctx, towerImage);
@@ -209,9 +216,10 @@ function gameLoop() {
   for (let i = monsters.length - 1; i >= 0; i--) {
     const monster = monsters[i];
     if (monster.hp > 0) {
-      const isDestroyed = monster.move(base);
+      const isDestroyed = monster.move(base, score);
       if (isDestroyed) {
         /* 게임 오버 */
+        sendEvent(3, { score });
         alert('게임 오버. 스파르타 본부를 지키지 못했다...ㅠㅠ');
         location.reload();
       }
@@ -219,6 +227,8 @@ function gameLoop() {
     } else {
       /* 몬스터가 죽었을 때 */
       monsters.splice(i, 1);
+
+      sendEvent(23, { score });
     }
   }
 
@@ -261,7 +271,7 @@ Promise.all([
   });
 
   serverSocket.on('response', (data) => {
-    console.log(data);
+    console.log('response: ', data);
   });
 
   serverSocket.on('connection', (data) => {
@@ -271,11 +281,18 @@ Promise.all([
     if (!isInitGame) {
       initGame();
     }
+    sendEvent(2, {});
   });
 
   serverSocket.on('dataSync', (data) => {
-    syncData(data);
-    console.log(data.message);
+    if (data.data) {
+      score = data.data.score;
+      userGold = data.data.gold;
+    }
+    if (data.monster) {
+      monsterLevel = data.monster.level;
+      monsterSpawnInterval = data.monster.monsterSpawnInterval;
+    }
   });
 
   /* 
@@ -300,7 +317,7 @@ function syncData(data) {
 
 const sendEvent = (handlerId, payload) => {
   serverSocket.emit('event', {
-    userId,
+    userId: getUserId(),
     clientVersion: CLIENT_VERSION,
     handlerId,
     payload,

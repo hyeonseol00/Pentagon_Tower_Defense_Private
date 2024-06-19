@@ -11,7 +11,6 @@ router.post('/sign-up', async (req, res, next) => {
   try {
     const { loginId, password } = req.body;
     const isExistUser = getAccounts().find((account) => account.id == loginId);
-    console.log(getAccounts());
 
     if (isExistUser)
       return res.status(409).json({ message: '이미 존재하는 ID입니다.' });

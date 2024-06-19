@@ -1,5 +1,7 @@
+import { CLIENT_VERSION } from '../constants.js';
 import { getGameAssets } from '../init/assets.js';
 import { getUsers, removeUser } from '../models/user.model.js';
+import handlerMappings from './handlerMapping.js';
 
 export const handleDisconnect = (socket, uuid) => {
   removeUser(socket.id);
@@ -42,9 +44,12 @@ export const handleEvent = (io, socket, data) => {
 
   const response = handler(data.userId, data.payload);
   if (response.broadcast) {
-    io.emit('response', 'broadcast');
-    return;
+    io.emit('response', response.broadcast);
   }
 
+  if (response.data) socket.emit('dataSync', response);
   socket.emit('response', response);
 };
+
+export const wrap = (middleware) => (socket, next) =>
+  middleware(socket.request, socket.request.res || {}, next);
