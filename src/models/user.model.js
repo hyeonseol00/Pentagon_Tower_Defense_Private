@@ -1,7 +1,10 @@
 import usersSchema from '../mongodb/schemas/user.schema.js';
 
 export const addUser = async (user) => {
-  const targetUser = new usersSchema(user);
+  let targetUser = await usersSchema.findOne({ uuid: user.uuid }).exec();
+
+  if (!targetUser) targetUser = new usersSchema(user);
+  else targetUser.socket_id = user.socket_id;
 
   await targetUser.save();
 };

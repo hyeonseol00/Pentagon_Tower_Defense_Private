@@ -12,5 +12,5 @@ export const updateHighScore = async (score) => {
 export const getHighScore = async () => {
   const highScore = await highScoreSchema.findOne().exec();
 
-  return highScore.high_score;
+  return highScore ? highScore.high_score : 0;
 };
