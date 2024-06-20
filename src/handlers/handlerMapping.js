@@ -5,6 +5,7 @@ import {
   placeInitialTowerHandler,
   placeTowerHandler,
   refundTowerHandler,
+  upgradeTowerHandler,
 } from './tower.handler.js';
 
 const handlerMappings = {
@@ -15,6 +16,7 @@ const handlerMappings = {
   23: killMonsterHandler,
   24: baseUnderAttack,
   25: refundTowerHandler,
+  26: upgradeTowerHandler,
 };
 
 export default handlerMappings;

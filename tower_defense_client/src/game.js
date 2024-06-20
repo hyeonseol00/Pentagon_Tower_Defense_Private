@@ -35,6 +35,9 @@ backgroundImage.src = 'images/bg.webp';
 const towerImage = new Image();
 towerImage.src = 'images/tower.png';
 
+const upgradedTowerImage = new Image();
+upgradedTowerImage.src = 'images/tower_upgraded.png';
+
 const baseImage = new Image();
 baseImage.src = 'images/base.png';
 
@@ -151,7 +154,7 @@ function placeInitialTowers() {
     towers.push(tower);
     tower.draw(ctx, towerImage);
 
-    sendEvent(21, { newTowerCoordinates: [x, y] });
+    sendEvent(21, { x, y });
   }
 }
 
@@ -162,9 +165,11 @@ function placeNewTower() {
 	*/
   const { x, y } = getRandomPositionNearPath(200);
 
-  if (userGold >= towerCost)
-    sendEvent(22, { newTowerCoordinates: [x, y], gold: userGold });
-  else return;
+  if (userGold >= towerCost) {
+    sendEvent(22, { x, y, gold: userGold });
+  } else {
+    return;
+  }
 
   const tower = new Tower(x, y);
   towers.push(tower);
@@ -173,6 +178,10 @@ function placeNewTower() {
 
 function refundLastTower() {
   sendEvent(25, {});
+}
+
+function upgradeRandomTower() {
+  sendEvent(26, {});
 }
 
 function placeBase() {
@@ -202,7 +211,11 @@ function gameLoop() {
 
   // 타워 그리기 및 몬스터 공격 처리
   towers.forEach((tower) => {
-    tower.draw(ctx, towerImage);
+    if (!tower.isUpgraded) {
+      tower.draw(ctx, towerImage);
+    } else {
+      tower.draw(ctx, upgradedTowerImage);
+    }
     tower.updateCooldown();
     monsters.forEach((monster) => {
       const distance = Math.sqrt(
@@ -305,9 +318,15 @@ Promise.all([
   serverSocket.on('refundTower', (data) => {
     towers.pop();
     userGold = data.refundTower.gold;
-    console.log(data);
+    console.log('refundTower', data);
   });
 
+  serverSocket.on('upgradeTower', (data) => {
+    towers[data.towerIdx].isUpgraded = true;
+    userGold = data.data.gold;
+    console.log('upgradeTower:', data);
+    towers[data.towerIdx].draw(ctx, upgradedTowerImage);
+  });
   /* 
     서버의 이벤트들을 받는 코드들은 여기다가 쭉 작성해주시면 됩니다! 
     e.g. serverSocket.on("...", () => {...});
@@ -362,5 +381,18 @@ refundTowerButton.style.cursor = 'pointer';
 refundTowerButton.addEventListener('click', refundLastTower);
 
 document.body.appendChild(refundTowerButton);
+
+const upgradeTowerButton = document.createElement('button');
+upgradeTowerButton.textContent = '타워 업그레이드';
+upgradeTowerButton.style.position = 'absolute';
+upgradeTowerButton.style.top = '10px';
+upgradeTowerButton.style.right = '310px';
+upgradeTowerButton.style.padding = '10px 20px';
+upgradeTowerButton.style.fontSize = '16px';
+upgradeTowerButton.style.cursor = 'pointer';
+
+upgradeTowerButton.addEventListener('click', upgradeRandomTower);
+
+document.body.appendChild(upgradeTowerButton);
 
 export { sendEvent };
