@@ -20,6 +20,7 @@ async function monsterLevelUp(userData) {
 }
 
 export const killMonsterHandler = async (userId, payload) => {
+  const { monster } = getGameAssets();
   const userData = await getUserData(userId);
 
   if (Math.abs(userData.score - payload.score) >= 200)
@@ -27,7 +28,10 @@ export const killMonsterHandler = async (userId, payload) => {
 
   userData.score += 100;
 
-  if (userData.monster_level <= userData.score / 2000) {
+  if (
+    userData.monster_level < monster.length &&
+    userData.monster_level <= userData.score / 2000
+  ) {
     return await monsterLevelUp(userData);
   }
 
@@ -41,7 +45,7 @@ export const killMonsterHandler = async (userId, payload) => {
 };
 
 export const killTreasureGoblinHandler = async (userId, payload) => {
-  const { commonData } = getGameAssets();
+  const { monster, commonData } = getGameAssets();
   const userData = await getUserData(userId);
   let response;
 
@@ -51,7 +55,10 @@ export const killTreasureGoblinHandler = async (userId, payload) => {
   userData.score += 300;
   userData.gold += commonData.tower_cost * 2;
 
-  if (userData.monster_level <= userData.score / 2000) {
+  if (
+    userData.monster_level < monster.length &&
+    userData.monster_level <= userData.score / 2000
+  ) {
     response = await monsterLevelUp(userData);
   }
 
