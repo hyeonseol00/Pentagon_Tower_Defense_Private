@@ -47,6 +47,14 @@ export const handleEvent = async (io, socket, data) => {
     io.emit('response', response.broadcast);
   }
 
-  if (response.data) socket.emit('dataSync', response);
+  if (response.data) {
+    socket.emit('dataSync', response);
+  }
+
+  if (response.refundTower) {
+    socket.emit('refundTower', response);
+    return;
+  }
+
   socket.emit('response', response);
 };

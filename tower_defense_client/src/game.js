@@ -171,6 +171,10 @@ function placeNewTower() {
   tower.draw(ctx, towerImage);
 }
 
+function refundLastTower() {
+  sendEvent(25, {});
+}
+
 function placeBase() {
   const lastPoint = monsterPath[monsterPath.length - 1];
   base = new Base(lastPoint.x, lastPoint.y, baseHp);
@@ -298,6 +302,12 @@ Promise.all([
     }
   });
 
+  serverSocket.on('refundTower', (data) => {
+    towers.pop();
+    userGold = data.refundTower.gold;
+    console.log(data);
+  });
+
   /* 
     서버의 이벤트들을 받는 코드들은 여기다가 쭉 작성해주시면 됩니다! 
     e.g. serverSocket.on("...", () => {...});
@@ -306,7 +316,7 @@ Promise.all([
 });
 
 function syncData(data) {
-  const commonData = data.commonData[0];
+  const commonData = data.commonData;
   const monster = data.monster;
 
   userGold = commonData.user_gold;
@@ -339,5 +349,18 @@ buyTowerButton.style.cursor = 'pointer';
 buyTowerButton.addEventListener('click', placeNewTower);
 
 document.body.appendChild(buyTowerButton);
+
+const refundTowerButton = document.createElement('button');
+refundTowerButton.textContent = '타워 환불';
+refundTowerButton.style.position = 'absolute';
+refundTowerButton.style.top = '10px';
+refundTowerButton.style.right = '160px';
+refundTowerButton.style.padding = '10px 20px';
+refundTowerButton.style.fontSize = '16px';
+refundTowerButton.style.cursor = 'pointer';
+
+refundTowerButton.addEventListener('click', refundLastTower);
+
+document.body.appendChild(refundTowerButton);
 
 export { sendEvent };
