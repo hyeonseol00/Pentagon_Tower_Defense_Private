@@ -30,6 +30,7 @@ const registerHandler = (io) => {
           score: 0,
           user_high_score: 0,
           tower_coordinates: [],
+          tower_isUpgrades: [],
           gold: commonData.user_gold,
           hp: commonData.base_hp,
         });
@@ -40,6 +41,7 @@ const registerHandler = (io) => {
           monster_spawn_interval: monster[0].spawn_interval,
           score: 0,
           tower_coordinates: [],
+          tower_isUpgrades: [],
           gold: commonData.user_gold,
           hp: commonData.base_hp,
         });
