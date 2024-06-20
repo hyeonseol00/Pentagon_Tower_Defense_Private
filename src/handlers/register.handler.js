@@ -30,8 +30,8 @@ const registerHandler = (io) => {
           score: 0,
           user_high_score: 0,
           tower_coordinates: [],
-          gold: commonData[0].user_gold,
-          hp: commonData[0].base_hp,
+          gold: commonData.user_gold,
+          hp: commonData.base_hp,
         });
       else
         await updateUserData({
@@ -40,8 +40,8 @@ const registerHandler = (io) => {
           monster_spawn_interval: monster[0].spawn_interval,
           score: 0,
           tower_coordinates: [],
-          gold: commonData[0].user_gold,
-          hp: commonData[0].base_hp,
+          gold: commonData.user_gold,
+          hp: commonData.base_hp,
         });
       handleConnection(socket, userID);
 
