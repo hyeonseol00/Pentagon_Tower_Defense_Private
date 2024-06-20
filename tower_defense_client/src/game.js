@@ -51,6 +51,9 @@ for (let i = 1; i <= NUM_OF_MONSTERS; i++) {
   monsterImages.push(img);
 }
 
+const treasureGoblinImage = new Image();
+treasureGoblinImage.src = 'images/treasure_goblin.png';
+
 let monsterPath;
 
 function generateRandomMonsterPath() {
@@ -191,7 +194,20 @@ function placeBase() {
 }
 
 function spawnMonster() {
-  monsters.push(new Monster(monsterPath, monsterImages, monsterLevel));
+  monsters.push(
+    new Monster(monsterPath, monsterImages, monsterLevel, 'common'),
+  );
+}
+
+function spawnTreasureGoblin() {
+  monsters.push(
+    new Monster(
+      monsterPath,
+      treasureGoblinImage,
+      monsterLevel,
+      'treasureGoblin',
+    ),
+  );
 }
 
 function gameLoop() {
@@ -208,6 +224,10 @@ function gameLoop() {
   ctx.fillText(`골드: ${userGold}`, 100, 150); // 골드 표시
   ctx.fillStyle = 'black';
   ctx.fillText(`현재 레벨: ${monsterLevel}`, 100, 200); // 최고 기록 표시
+
+  if (Math.floor(Math.random() * 10000) == 7777) {
+    spawnTreasureGoblin(); // 프레임당 1/10000 확률로 보물고블린 소환
+  }
 
   // 타워 그리기 및 몬스터 공격 처리
   towers.forEach((tower) => {
@@ -246,9 +266,15 @@ function gameLoop() {
       monster.draw(ctx);
     } else {
       /* 몬스터가 죽었을 때 */
+      if (monster.hp != -999) {
+        // -999 = 기지에 몸박하고 죽었다는 뜻
+        if (monster.type == 'treasureGoblin') {
+          sendEvent(27, { score });
+        } else {
+          sendEvent(23, { score });
+        }
+      }
       monsters.splice(i, 1);
-
-      sendEvent(23, { score });
     }
   }
 

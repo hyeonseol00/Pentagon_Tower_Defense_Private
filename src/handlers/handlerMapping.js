@@ -1,6 +1,9 @@
 import { baseUnderAttack } from './base.handler.js';
 import { gameEnd, gameStart } from './game.handler.js';
-import { killMonsterHandler } from './monster.handler.js';
+import {
+  killMonsterHandler,
+  killTreasureGoblinHandler,
+} from './monster.handler.js';
 import {
   placeInitialTowerHandler,
   placeTowerHandler,
@@ -17,6 +20,7 @@ const handlerMappings = {
   24: baseUnderAttack,
   25: refundTowerHandler,
   26: upgradeTowerHandler,
+  27: killTreasureGoblinHandler,
 };
 
 export default handlerMappings;
