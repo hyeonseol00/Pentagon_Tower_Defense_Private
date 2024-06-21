@@ -84,4 +84,4 @@ https://github.com/hyeonseol00/Pentagon_Tower_Defense_Private/blob/c30f820ee1418
 <br><br>
 
 ## ERD Diagram
-![](https://velog.velcdn.com/images/hyeonseol22/post/e57409c8-b583-4c4a-9086-06c38a1a719b/image.png)
+![{C5D7B75D-9B3F-49E6-BD3D-D849583DDA6B}](https://github.com/hyeonseol00/Pentagon_Tower_Defense_Private/assets/159992036/4f010fa4-e255-45dc-81a3-4a2f9f685033)
