@@ -1,5 +1,6 @@
 import { CLIENT_VERSION } from '../constants.js';
 import { getGameAssets } from '../init/assets.js';
+import { getUserData } from '../models/user-data.model.js';
 import { getUsers, removeUser } from '../models/user.model.js';
 import handlerMappings from './handlerMapping.js';
 
@@ -16,11 +17,13 @@ export const handleConnection = async (socket, userUUID) => {
   console.log('현재 접속 중인 사용자:', await getUsers());
 
   const { monster, commonData } = getGameAssets();
+  const userData = await getUserData(userUUID);
 
   socket.emit('connection', {
     uuid: userUUID,
     monster: monster[0],
     commonData,
+    userHighScore: userData.user_high_score,
   });
 };
 

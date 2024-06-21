@@ -333,7 +333,6 @@ Promise.all([
   serverSocket.on('dataSync', (data) => {
     if (data.data) {
       score = data.data.score;
-      highScore = data.data.user_high_score;
       userGold = data.data.gold;
     }
     if (data.monster) {
@@ -371,7 +370,7 @@ function syncData(data) {
   numOfInitialTowers = commonData.num_of_initial_towers;
   monsterLevel = monster.level;
   monsterSpawnInterval = monster.spawn_interval;
-  highScore = 0; // 기존 최고 점수, 인증 구현 후 추가 예정
+  highScore = data.userHighScore;
 }
 
 const sendEvent = (handlerId, payload) => {
