@@ -333,6 +333,7 @@ Promise.all([
   serverSocket.on('dataSync', (data) => {
     if (data.data) {
       score = data.data.score;
+      highScore = data.data.user_high_score;
       userGold = data.data.gold;
     }
     if (data.monster) {
